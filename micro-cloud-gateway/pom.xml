@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>micro-business</artifactId>
-    <name>micro-business</name>
-    <packaging>pom</packaging>
-    <description>微服务管理模块</description>
+    <artifactId>micro-cloud-gateway</artifactId>
+    <name>micro-cloud-gateway</name>
+    <packaging>jar</packaging>
+    <description>微服务网关模块</description>
 
     <parent>
         <groupId>com.pupils</groupId>
@@ -14,20 +14,15 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <modules>
-        <module>provider-cloud-uas</module>
-    </modules>
-
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
     </dependencies>
 
-    <dependencyManagement>
-
-    </dependencyManagement>
-
     <build>
-        <finalName>micro-business</finalName>
+        <finalName>micro-cloud-gateway</finalName>
     </build>
 
 </project>
