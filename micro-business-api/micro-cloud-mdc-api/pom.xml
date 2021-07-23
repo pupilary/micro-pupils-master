@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>micro-cloud-mdc-api</artifactId>
+    <name>micro-cloud-mdc-api</name>
+    <packaging>jar</packaging>
+    <description>微服务管理模块 -- 数据中心api</description>
+
+    <parent>
+        <groupId>com.pupils</groupId>
+        <artifactId>micro-business-api</artifactId>
+        <version>0.0.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <dependencies>
+
+    </dependencies>
+
+    <build>
+        <finalName>micro-cloud-mdc-api</finalName>
+    </build>
+
+</project>

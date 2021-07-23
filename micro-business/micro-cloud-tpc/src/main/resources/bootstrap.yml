@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: provider-cloud-tpc
+  cloud:
+    nacos:
+      config:
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+        file-extension: yaml
+        extension-configs:
+          - data-id: application.yaml
+            refresh: true
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+      discovery:
+        log-name: micro-cloud-tpc.log
+        namespace: ad112586-6044-4cb1-8199-016f712af590
+        server-addr: 127.0.0.1:8848
