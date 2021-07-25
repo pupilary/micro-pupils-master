@@ -10,7 +10,12 @@ import com.pupils.provider.query.CategoryQuery;
 import com.pupils.provider.service.CategoryService;
 import com.pupils.provider.vo.CategoryVo;
 import com.pupils.web.metadata.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author takesi
@@ -20,11 +25,38 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public PageInfo queryCategory(CategoryQuery categoryQuery) {
-        IPage<CategoryVo> page = new Page<>(categoryQuery.getCurrent(), categoryQuery.getPageSize());
+        IPage<Category> page = new Page<>(categoryQuery.getCurrent(), categoryQuery.getPageSize());
 
         if (categoryQuery.getLevel() == null) {
             categoryQuery.setLevel(CategoryLevel.DEFAULT.getValue());
         }
+        IPage<Category> result = baseMapper.queryCategoryWithPage(page, categoryQuery);
+        List<Category> records = result.getRecords();
+        List<CategoryVo> data = records.stream()
+                .map(item -> {
+                    CategoryVo categoryVo = new CategoryVo();
+                    BeanUtils.copyProperties(item, categoryVo);
+                    categoryVo.setChildren(this.buildTree(records, item, categoryVo, categoryQuery.getStatus()));
+                    return categoryVo;
+                })
+                .sorted(Comparator.comparingInt(CategoryVo::getSort))
+                .collect(Collectors.toList());
+        return PageInfo.builder()
+                .setCurrent(result.getCurrent())
+                .setSize(result.getSize())
+                .setPages(result.getPages())
+                .setTotal(result.getTotal())
+                .setData(data)
+                .build();
+    }
+
+    private List<CategoryVo> buildTree(List<Category> records, Category current, CategoryVo record, Boolean status) {
+        records.stream()
+                .forEach(item -> {
+                    if (item.getId().equals(current.getParentId())) {
+
+                    }
+                });
         return null;
     }
 }

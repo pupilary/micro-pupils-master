@@ -21,4 +21,29 @@
         id, `name`, icon, `level`, parent_id, sort, unit, `status`, create_time, update_time,
         version
     </sql>
+
+    <select id="queryCategoryWithPage" resultType="com.pupils.provider.model.domain.Category">
+        select id, `name`, icon, `level`, parent_id, sort, unit, `status`, create_time, update_time
+        from pms_category
+        <where>
+            `level` = #{query.level}
+            <if test="query.name != null and query.name != ''">
+                and `name` like concat('%', #{query.name}, '%')
+            </if>
+            <if test="query.status != null">
+                and status = #{query.status}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCategoryByParentId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from pms_category
+        <where>
+            parent_id = #{parentId}
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>
