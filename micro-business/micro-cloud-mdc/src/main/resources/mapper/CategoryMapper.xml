@@ -46,4 +46,19 @@
             </if>
         </where>
     </select>
+
+    <select id="queryCategoryInParentIdAndByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from pms_category
+        <where>
+            parent_id in
+            <foreach collection="parentIds" item="parentId" index="i" open="(" close=")" separator=",">
+                #{parentId}
+            </foreach>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>

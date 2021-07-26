@@ -5,16 +5,28 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.pupils.provider.query.CategoryQuery;
 import com.pupils.web.metadata.PageInfo;
 
+import java.util.List;
+
 /**
  * @author takesi
  */
 public interface CategoryService extends IService<Category> {
 
     /**
-     * queryCategory
+     * listWithTree
+     *
      * @param categoryQuery categoryQuery
      * @return pageInfo
      */
-    PageInfo queryCategory(CategoryQuery categoryQuery);
+    PageInfo listWithTree(CategoryQuery categoryQuery);
+
+    /**
+     * listByParentIds
+     *
+     * @param parentIds parentIds
+     * @param status    status
+     * @return children list
+     */
+    List<Category> listByParentIds(List<Long> parentIds, boolean status);
 
 }

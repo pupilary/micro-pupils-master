@@ -33,4 +33,13 @@ public interface CategoryMapper extends BaseMapper<Category> {
      */
     List<Category> queryCategoryByParentId(@Param("parentId") Long parentId, @Param("status") Boolean status);
 
+    /**
+     * queryCategoryInParentIdAndByStatus
+     *
+     * @param parentIds parentIds
+     * @param status    status
+     * @return list
+     */
+    List<Category> queryCategoryInParentIdAndByStatus(@Param("parentIds") List<Long> parentIds,
+                                                      @Param("status") Boolean status);
 }

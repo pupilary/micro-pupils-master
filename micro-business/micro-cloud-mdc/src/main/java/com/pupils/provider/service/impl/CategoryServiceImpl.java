@@ -24,23 +24,16 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
     @Override
-    public PageInfo queryCategory(CategoryQuery categoryQuery) {
+    public PageInfo listWithTree(CategoryQuery categoryQuery) {
         IPage<Category> page = new Page<>(categoryQuery.getCurrent(), categoryQuery.getPageSize());
 
         if (categoryQuery.getLevel() == null) {
             categoryQuery.setLevel(CategoryLevel.DEFAULT.getValue());
         }
         IPage<Category> result = baseMapper.queryCategoryWithPage(page, categoryQuery);
+        // parent category list
         List<Category> records = result.getRecords();
-        List<CategoryVo> data = records.stream()
-                .map(item -> {
-                    CategoryVo categoryVo = new CategoryVo();
-                    BeanUtils.copyProperties(item, categoryVo);
-                    categoryVo.setChildren(this.buildTree(records, item, categoryVo, categoryQuery.getStatus()));
-                    return categoryVo;
-                })
-                .sorted(Comparator.comparingInt(CategoryVo::getSort))
-                .collect(Collectors.toList());
+        List<CategoryVo> data = this.buildTree(records, categoryQuery.getStatus());
         return PageInfo.builder()
                 .setCurrent(result.getCurrent())
                 .setSize(result.getSize())
@@ -50,13 +43,43 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 .build();
     }
 
-    private List<CategoryVo> buildTree(List<Category> records, Category current, CategoryVo record, Boolean status) {
-        records.stream()
-                .forEach(item -> {
-                    if (item.getId().equals(current.getParentId())) {
+    @Override
+    public List<Category> listByParentIds(List<Long> parentIds, boolean status) {
+        return baseMapper.queryCategoryInParentIdAndByStatus(parentIds, status);
+    }
 
-                    }
-                });
-        return null;
+    private List<CategoryVo> buildTree(List<Category> parents, Boolean status) {
+        List<Long> parentIds = parents.stream()
+                .map(Category::getId)
+                .collect(Collectors.toList());
+        List<Category> allChildren = baseMapper.queryCategoryInParentIdAndByStatus(parentIds, status);
+
+        return parents.stream()
+                .map(item -> {
+                    CategoryVo categoryVo = new CategoryVo();
+                    categoryVo.setChildren(this.getChildren(item, allChildren, status));
+                    return categoryVo;
+                })
+                .sorted(Comparator.comparingInt(CategoryVo::getSort))
+                .collect(Collectors.toList());
+    }
+
+    private List<CategoryVo> getChildren(Category parent, List<Category> allChildren, boolean status) {
+        List<Long> parentIds = allChildren.stream()
+                .map(Category::getId)
+                .collect(Collectors.toList());
+
+        List<Category> nextAllChildren = this.listByParentIds(parentIds, status);
+
+        return allChildren.stream()
+                .filter(child -> parent.getId().equals(child.getParentId()))
+                .map(child -> {
+                    CategoryVo categoryVo = new CategoryVo();
+                    BeanUtils.copyProperties(child, categoryVo);
+                    categoryVo.setChildren(this.getChildren(child, nextAllChildren, status));
+                    return categoryVo;
+                })
+                .sorted(Comparator.comparingInt(CategoryVo::getSort))
+                .collect(Collectors.toList());
     }
 }
